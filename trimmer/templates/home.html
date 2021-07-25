@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+
+/*range slider*/
+
+
+
+/*video Player	*/
+.monitor
+{
+	text-align:center;
+	margin-top:100px;
+
+}
+#custom-seekbar
+{  
+  cursor: pointer;
+  height: 5px;
+  margin-bottom: 10px;
+  margin-top:10px;
+  margin-left:482px;
+  outline: thin solid orange;
+  text-align:center;
+  overflow: hidden;
+  position: relative;
+  width: 400px;
+}
+#custom-seekbar span
+{
+  background-color: #E5E5E5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 10px;
+  width: 0px;
+}
+.control_btns
+{
+	width:30px;
+	height:30px;
+}
+#controls
+{
+	margin-left:650px;
+}
+#play
+{
+	display:block;
+	overflow:auto;
+}
+#pause
+{
+	display:none;
+	overflow:auto;
+}
+video
+{
+	border:solid black;
+}
+
+#start_time
+{
+	margin-right:150px;
+}
+#end_time
+{
+	margin-left:150px;
+	margin-top:-15px;
+}
+.crop_values
+{
+
+}
+
+</style>
+</head>
+
+
+<body>
+<!-- range slider -->
+
+
+<!-- Video Player -->
+<div class="monitor">
+	<video id="video" width="400"  autoplay>
+    {% load static %}
+	    <source src="{% static '1.mp4' %}" type="video/mp4">
+	</video>
+	
+	<div id="custom-seekbar">
+	  <span></span>
+	</div>
+	<div class="slider_track">
+		<input type = "range" min="0" max="100" value="30" id="slider_1">
+		<input type = "range" min="0" max="100" value="70" id="slider_2">
+		</div>
+	
+	<div class="badge badge-dark" id="start_time">00:00</div>
+	<div class="badge badge-dark" id="end_time"></div>
+	
+	<div class="crop_values">
+		<input id="range1" name="range1" value="0:00">
+		<input id="range2" name="range2" >
+	</div>
+
+	<div id="controls">
+    {% load static %}
+		<button id="play" class="btn btn-outline-light" onclick="play()"><img class="control_btns" src="{% static 'btns/play.png' %}"></button>
+    {% load static %}
+		<button id="pause" class="btn btn-outline-light" onclick="pause()"><img class="control_btns" src="{% static 'btns/pause.png' %}"></button>
+	</div>
+	</div>
+</div>
+
+
+<script>
+
+	var vid = document.getElementById("video");
+
+
+
+	function play() {
+	vid.play();
+	document.getElementById("pause").style.display="block";
+	document.getElementById("play").style.display="none";
+	}
+
+	function pause() {
+		vid.pause();
+		document.getElementById("pause").style.display="none";
+		document.getElementById("play").style.display="block";
+	}
+
+	
+
+
+	var i = setInterval(function() {
+	if(vid.readyState > 0) {
+
+
+		var minutes = parseInt(vid.duration / 60, 10);
+		var seconds = parseInt(vid.duration % 60);
+
+		// (Put the minutes and seconds in the display)
+
+		clearInterval(i);
+		end_time="0"+minutes+":"+seconds;
+		start_time=0
+		document.getElementById("end_time").innerHTML=end_time;
+		document.getElementById("range2").value=end_time;
+
+		
+		
+		
+	}
+
+}, 200);
+
+
+
+
+vid.ontimeupdate = function(){
+  var percentage = ( vid.currentTime / vid.duration ) * 100;
+  $("#custom-seekbar span").css("width", percentage+"%");
+};
+
+$("#custom-seekbar").on("click", function(e){
+	pause();
+    var offset = $(this).offset();   
+    var left = (e.pageX - offset.left);
+    var totalWidth = $("#custom-seekbar").width();
+    var percentage = ( left / totalWidth );
+    var vidTime = vid.duration * percentage;
+    vid.currentTime = vidTime;
+
+});//click()
+
+
+
+
+
+</script>
+</body>
+</html>
